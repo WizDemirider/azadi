@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Watches{% endblock %}
+
+{% block top %}
+  <!-- HereMaps -->
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"
+  type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"
+  type="text/javascript" charset="utf-8"></script>
+  </script>
+{% endblock %}
+
+{% block heading %}My Watches{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-8 col-lg-6">
+            {% if success %}
+                <div class="alert alert-success">Watch added!</div>
+            {% endif %}
+            <h3>Enter watch ID to add</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <label for="id">Watch ID</label>
+                <input type="text" name="id" class="form-control"><br>
+                <button type="submit" class="btn btn-info">Submit</button>
+            </form>
+            <h3>Your Watches</h3>
+            {% for watch in watches %}
+            <div class="card">
+                <div class="card-body" style="padding: 0 0 0 0;">
+                    <div style="width: 540px; height: 250px" class="card-img-top" id="map{{watch.id}}">
+                    </div>
+                    <h5 class="card-title pt-2 pl-2"><b>Watch ID: {{watch.id}}</b></h5>
+                    <!-- <p class="card-text">{{watch.location}}</p> -->
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+  <!-- HereMaps -->
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"
+  type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"
+  type="text/javascript" charset="utf-8"></script>
+  <!-- Custom JS -->
+  <script type="text/javascript" charset="utf-8">
+  var platform = new H.service.Platform({
+    'apikey': 'lQdCCkaHvK_RqYJqu0FX8UoJIU-pSX-s79deRCF2otA'
+});
+
+var geocoder = platform.getGeocodingService();
+
+// Obtain the default map types from the platform object:
+var defaultLayers = platform.createDefaultLayers();
+
+    {% for watch in watches %}
+
+    var map = new H.Map(
+        document.getElementById('map{{watch.id}}'),
+        defaultLayers.vector.normal.map,
+        {
+            zoom: 12,
+            center: {lat: 19.706089, lng: 72.783488}
+        }
+    );
+
+    // resize on window resize
+    window.addEventListener('resize', function () {
+        map.getViewPort().resize();
+    });
+
+    {% endfor %}
+  </script>
+{% endblock %}
