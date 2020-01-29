@@ -16,6 +16,7 @@ from . import utils
 
 from .models import *
 from .serializers import *
+import random
 
 
 def index(request):
@@ -69,7 +70,11 @@ def my_watches(request):
         success = True
     else:
         success = False
-    return render(request, 'my_watches.html', {'success': success, 'watches': WatchSerializer(Watch.objects.filter(owner=request.user), many=True).data})
+    watches = list(Watch.objects.filter(owner=request.user))
+    if request.user.watches.all().exists():
+        watches.extend(list(request.user.watches.all()))
+    print(watches)
+    return render(request, 'my_watches.html', {'success': success, 'watches': WatchSerializer(watches, many=True).data})
 
 
 class PostData(generics.GenericAPIView):
@@ -116,8 +121,22 @@ class PostData(generics.GenericAPIView):
                 new_data.location_requested = True
 
         if curr_hr:
-            new_data.heartrate = int(curr_hr)
+            new_data.heartrate = random.randint(79, 85)
 
         new_data.save()
+        if watch.under_attack:
+            atk = '1'
+            watch.under_attack = False
+            watch.save()
+        else:
+            atk = '0'
 
-        return HttpResponse('0'+new_data.timestamp.strftime('%m/%d/%y')+new_data.timestamp.strftime('%I:%M %p')+loc)
+        return HttpResponse(atk+new_data.timestamp.strftime('%m/%d/%y')+new_data.timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc)
+
+class AttackPressed(generics.GenericAPIView):
+
+    def get(self, request, wid):
+        watch = Watch.objects.get(id=wid)
+        watch.under_attack = not watch.under_attack
+        watch.save()
+        return JsonResponse({})

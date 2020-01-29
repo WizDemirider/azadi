@@ -10,6 +10,8 @@ class Watch(models.Model):
     owner = models.ForeignKey(User, related_name='watch', on_delete=models.CASCADE)
     last_location = models.CharField(max_length=250, null=True, default=None)
     full_location = models.TextField(null=True, default=None)
+    under_attack = models.BooleanField(default=False)
+    trusted_users = models.ManyToManyField(User, related_name='watches')
 
 class History(models.Model):
     watch = models.ForeignKey(Watch, related_name='history', on_delete=models.CASCADE)

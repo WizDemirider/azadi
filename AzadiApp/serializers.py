@@ -3,30 +3,22 @@ from .models import *
 
 
 class WatchSerializer(serializers.ModelSerializer):
-    location = serializers.SerializerMethodField('get_location')
-
+    coordinates = serializers.SerializerMethodField('get_location')
+    owner = serializers.SerializerMethodField('get_owner')
 
     class Meta:
         model = Watch
-        fields = ('id', 'owner', 'location')
+        fields = ('id', 'owner', 'coordinates', 'under_attack')
 
     def get_location(self, watch):
         try:
             last_req = History.objects.filter(watch=watch).latest('timestamp')
-            GeoJson = {
-                "type": "FeatureCollection",
-                "features": []
-            }
-            data = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": list(last_req.get_coordinates()).append(0)
-                }
-            }
-            GeoJson['features'].append(data)
+            coordinates = last_req.get_coordinates()
 
         except Exception as e:
             print(e)
-            GeoJson = None
-        return GeoJson
+            coordinates = None
+        return coordinates
+
+    def get_owner(self, watch):
+        return watch.owner.username
