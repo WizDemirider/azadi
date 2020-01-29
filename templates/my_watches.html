@@ -69,8 +69,8 @@
   <script type="text/javascript" charset="utf-8">
     attack_pressed = function(wid) {
         fetch(window.location.href.split('/').slice(0,3).join('/')+'/api/attack-pressed/'+wid.toString()).then(
-            window.location.reload();
-        )
+            window.location.reload()
+        );
     }
 
 
