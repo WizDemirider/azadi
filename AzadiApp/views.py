@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from rest_framework import generics, status
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import requests
 from . import utils
@@ -72,6 +72,12 @@ def my_watches(request):
     print(watches)
     return render(request, 'my_watches.html', {'success': success, 'watches': WatchSerializer(watches, many=True).data})
 
+@login_required
+def fullData(request, wid):
+    watch = Watch.objects.get(id=wid)
+    history = History.objects.filter(watch=watch).order_by('-timestamp')
+    return render(request, 'full-data.html', {'watch': watch, 'history': history[:15], 'watch_json': WatchSerializer(watch).data});
+
 
 class PostData(generics.GenericAPIView):
     # permission_classes = (AllowAny,)
@@ -89,7 +95,7 @@ class PostData(generics.GenericAPIView):
         loc = "No coordinates sent."
 
         recv_data = request.body.decode()
-        curr_hr, clat, clong = [float(val) for val in recv_data.split('&')]
+        curr_hr, clat, clong, b_pressed = [float(val) for val in recv_data.split('&')]
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
@@ -116,18 +122,19 @@ class PostData(generics.GenericAPIView):
                 watch.save()
                 new_data.location_requested = True
 
-        if curr_hr:
-            new_data.heartrate = random.randint(79, 85)
-
+        new_data.heartrate = random.randint(79, 85)
         new_data.save()
-        if watch.under_attack:
-            atk = '1'
+
+        if b_pressed == 1.0:
             watch.under_attack = False
             watch.save()
+
+        if watch.under_attack:
+            atk = '1'
         else:
             atk = '0'
 
-        return HttpResponse(atk+new_data.timestamp.strftime('%m/%d/%y')+new_data.timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc)
+        return HttpResponse(atk+(new_data.timestamp+timedelta(hours=5, minutes=30)).strftime('%d/%m/%y')+(new_data.timestamp+timedelta(hours=5, minutes=30)).strftime('%I:%M %p')+str(new_data.heartrate)+loc)
 
 class AttackPressed(generics.GenericAPIView):
 

@@ -45,10 +45,10 @@
                     <div class="card-body pt-1 pl-2">No Location Available</div>
                     {% endif %}
                     </div>
-                    <div class="card-title pt-2 pl-2 pb-1">
+                    <a href="{% url 'full-data' watch.id %}"><div class="card-title pt-2 pl-2 pb-1">
                             <div class="col-xs-6"><b>Watch ID: {{watch.id}}</b></div>
                             <div class="col-xs-6">Owner: {{watch.owner}}</div>
-                    </div>
+                    </div></a>
                     <div class="card-text pl-2 pb-1 text-center">
                         <button type="button" class="btn btn-danger" onclick="attack_pressed({{watch.id}})">{% if watch.under_attack %}Cancel{% else %}Simulate Attack{% endif %}</button>
                     </div>
@@ -69,7 +69,7 @@
   <script type="text/javascript" charset="utf-8">
     attack_pressed = function(wid) {
         fetch(window.location.href.split('/').slice(0,3).join('/')+'/api/attack-pressed/'+wid.toString()).then(
-            window.location.reload()
+            setTimeout(function(){ window.location.reload() }, 500)
         );
     }
 
@@ -98,6 +98,19 @@
         window.addEventListener('resize', function () {
             map.getViewPort().resize();
         });
+
+        var animatedSvg =
+        '<svg height="100" width="100"><circle cx="15" cy="15" r="10" stroke="black" stroke-width="3" fill="blue" /></svg>';
+
+        // Create an icon object, an object with geographic coordinates and a marker:
+        var icon = new H.map.DomIcon(animatedSvg),
+            coords = {lat: {{watch.coordinates.0}}, lng: {{watch.coordinates.1}}},
+            marker = new H.map.DomMarker(coords, {icon: icon});
+
+        // Set map center and zoom, add the marker to the map:
+        map.setCenter(coords);
+        map.addObject(marker);
+
         {% endif %}
         {% endfor %}
   </script>

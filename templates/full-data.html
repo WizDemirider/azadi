@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Watch Data{% endblock %}
+
+{% block top %}
+
+{% endblock %}
+
+{% block heading %}Watch Data{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-8 col-lg-4">
+            <h3> Watch ID: {{watch.id}} </h3>
+            <span>Owner: {{watch_json.owner}}</span><br>
+            <span>Location: {{watch.full_location}}</span>
+        </div>
+        <div class="col-xs-12 col-md-8 col-lg-8">
+            <table class="table">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Heartrate</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+            {% for data in history %}
+                <tr>
+                    <td>{{data.timestamp|date:"M d, Y h:i:s A"}}</td>
+                    <td>{{data.heartrate}}</td>
+                    <td>{{data.get_coordinates.0}}</td>
+                    <td>{{data.get_coordinates.1}}</td>
+                </tr>
+
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
