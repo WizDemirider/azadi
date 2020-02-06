@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 coordinates_scale = 1000000
+ATTACK_CHOICES = (
+    ('p', "physical attack"),
+    ('f', "fall"),
+    ('h', "heart attack"),
+)
 
 class Watch(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
@@ -11,6 +16,7 @@ class Watch(models.Model):
     last_location = models.CharField(max_length=250, null=True, default=None)
     full_location = models.TextField(null=True, default=None)
     under_attack = models.BooleanField(default=False)
+    type_of_attack = models.CharField(max_length=2, choices=ATTACK_CHOICES, null=True)
     trusted_users = models.ManyToManyField(User, related_name='watches')
 
 class History(models.Model):

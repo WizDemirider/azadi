@@ -17,3 +17,7 @@ def haversine(pos1, pos2):
     mi = 3956 * c
 
     return {"km":km, "miles":mi}
+
+def send_alerts():
+
+    return True

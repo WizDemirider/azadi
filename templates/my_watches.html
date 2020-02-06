@@ -46,8 +46,13 @@
                     {% endif %}
                     </div>
                     <a href="{% url 'full-data' watch.id %}"><div class="card-title pt-2 pl-2 pb-1">
-                            <div class="col-xs-6"><b>Watch ID: {{watch.id}}</b></div>
-                            <div class="col-xs-6">Owner: {{watch.owner}}</div>
+                            <div class="col-xs-4"><b>Watch ID: {{watch.id}}</b></div>
+                            <div class="col-xs-4">Owner: {{watch.owner}}</div>
+                            {% if watch.under_attack %}
+                            <div class="col-xs-4">Attack: <span style="color: red;">{{watch.type_of_attack}}</span></div>
+                            {% else %}
+                            <div class="col-xs-4">Attack: <span style="color: rgb(85, 255, 0);">Safe</span></div>
+                            {% endif %}
                     </div></a>
                     <div class="card-text pl-2 pb-1 text-center">
                         <button type="button" class="btn btn-danger" onclick="attack_pressed({{watch.id}})">{% if watch.under_attack %}Cancel{% else %}Simulate Attack{% endif %}</button>

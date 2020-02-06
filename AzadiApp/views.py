@@ -95,18 +95,19 @@ class PostData(generics.GenericAPIView):
         loc = "No coordinates sent."
 
         recv_data = request.body.decode()
-        curr_hr, clat, clong, b_pressed = [float(val) for val in recv_data.split('&')]
+        fall, clat, clong, curr_hr = [float(val) for val in recv_data.split('&')]
+        print("data", recv_data)
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
             if History.objects.filter(watch=watch, location_requested=True).exists():
                 last_req = History.objects.filter(watch=watch, location_requested=True).latest('timestamp')
                 if utils.haversine(new_data.get_coordinates(), last_req.get_coordinates())['km'] > 1:
-                    res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+clat+'+'+clong+'&key=f80b2fa819d443819a1545a667753d9f')
+                    res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
                     data = res.json()['results']
                     # loc = [location['formatted'] for location in data]
-                    loc = data[0]["components"]["county"]
-                    watch.last_location = data[0]["components"]["county"]
+                    loc = data[0]["components"]["county"] or data[0]["components"]["city"]
+                    watch.last_location = data[0]["components"]["county"] or data[0]["components"]["city"]
                     watch.full_location = data[0]["formatted"]
                     watch.save()
                     new_data.location_requested = True
@@ -116,17 +117,25 @@ class PostData(generics.GenericAPIView):
                 res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
                 data = res.json()['results']
                 # loc = [location['formatted'] for location in data]
-                loc = data[0]["components"]["county"]
-                watch.last_location = data[0]["components"]["county"]
+                loc = data[0]["components"]["county"] or data[0]["components"]["city"]
+                watch.last_location = data[0]["components"]["county"] or data[0]["components"]["city"]
                 watch.full_location = data[0]["formatted"]
                 watch.save()
                 new_data.location_requested = True
 
-        new_data.heartrate = random.randint(79, 85)
+        if curr_hr:
+            new_data.heartrate = int(curr_hr)
+        else:
+            new_data.heartrate = random.randint(79, 85)
         new_data.save()
 
-        if b_pressed == 1.0:
-            watch.under_attack = False
+        # if b_pressed == 1.0:
+        #     watch.under_attack = False
+        #     watch.save()
+
+        if fall:
+            watch.under_attack = True
+            watch.type_of_attack = 'f'
             watch.save()
 
         if watch.under_attack:
@@ -141,5 +150,7 @@ class AttackPressed(generics.GenericAPIView):
     def get(self, request, wid):
         watch = Watch.objects.get(id=wid)
         watch.under_attack = not watch.under_attack
+        watch.type_of_attack('p')
         watch.save()
+        # redirect('sms')
         return JsonResponse({})
