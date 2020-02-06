@@ -26,7 +26,7 @@ SECRET_KEY = 'p*$yd37cc=in64ogb_u_-ww2o6i2(ynnmtc5uv!_52q3ymp9-6'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost', '192.168.43.209'
+    'localhost', '192.168.43.209', '192.168.1.135'
 ]
 
 
@@ -79,6 +79,11 @@ STATICFILES_DIRS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ankanarn@gmail.com'
+EMAIL_HOST_PASSWORD = 'ap@12345'
 
 WSGI_APPLICATION = 'Azadi.wsgi.application'
 

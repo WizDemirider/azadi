@@ -69,7 +69,6 @@ def my_watches(request):
     watches = list(Watch.objects.filter(owner=request.user))
     if request.user.watches.all().exists():
         watches.extend(list(request.user.watches.all()))
-    print(watches)
     return render(request, 'my_watches.html', {'success': success, 'watches': WatchSerializer(watches, many=True).data})
 
 @login_required
@@ -95,7 +94,13 @@ class PostData(generics.GenericAPIView):
         loc = "No coordinates sent."
 
         recv_data = request.body.decode()
-        fall, clat, clong, curr_hr = [float(val) for val in recv_data.split('&')]
+        try:
+            fall, clat, clong, curr_hr = [float(val) for val in recv_data.split('&')]
+        except Exception:
+            fall = 0.0
+            clat = 19.0968
+            clong = 72.8517
+            curr_hr = 0.0
         print("data", recv_data)
 
         if clat and clong:
@@ -144,6 +149,7 @@ class PostData(generics.GenericAPIView):
         if fall:
             watch.type_of_attack = 'f'
             watch.save()
+            utils.send_alerts()
 
         if watch.type_of_attack != None:
             atk = '1'
@@ -158,8 +164,9 @@ class AttackPressed(generics.GenericAPIView):
         watch = Watch.objects.get(id=wid)
         if watch.type_of_attack == None:
             watch.type_of_attack = 'p'
+            watch.save()
+            utils.send_alerts()
         else:
             watch.type_of_attack = None
-        watch.save()
-        # redirect('sms')
+            watch.save()
         return JsonResponse({})
