@@ -5,11 +5,12 @@ from .models import *
 class WatchSerializer(serializers.ModelSerializer):
     coordinates = serializers.SerializerMethodField('get_location')
     owner = serializers.SerializerMethodField('get_owner')
+    owner_phone = serializers.SerializerMethodField('get_owner_phone')
     under_attack = serializers.SerializerMethodField('get_attack_status')
 
     class Meta:
         model = Watch
-        fields = ('id', 'owner', 'coordinates', 'type_of_attack', 'under_attack', 'get_type_of_attack_display')
+        fields = ('id', 'owner', 'coordinates', 'type_of_attack', 'under_attack', 'get_type_of_attack_display', 'owner_phone')
 
     def get_location(self, watch):
         try:
@@ -23,6 +24,9 @@ class WatchSerializer(serializers.ModelSerializer):
 
     def get_owner(self, watch):
         return watch.owner.username
+
+    def get_owner_phone(self, watch):
+        return watch.owner.phone
 
     def get_attack_status(self, watch):
         if watch.type_of_attack == None:

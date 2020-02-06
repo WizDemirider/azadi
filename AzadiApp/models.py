@@ -1,9 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
 # Create your models here.
 
 coordinates_scale = 1000000
+
 ATTACK_CHOICES = (
     ('p', "physical attack"),
     ('f', "fall detected"),
@@ -11,13 +12,16 @@ ATTACK_CHOICES = (
     ('o', "Outside Range"),
 )
 
+class AppUser(AbstractUser):
+    phone = models.CharField(max_length=13, null=True)
+
 class Watch(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
-    owner = models.ForeignKey(User, related_name='watch', on_delete=models.CASCADE)
+    owner = models.ForeignKey(AppUser, related_name='watch', on_delete=models.CASCADE)
     last_location = models.CharField(max_length=250, null=True, default=None)
     full_location = models.TextField(null=True, default=None)
     type_of_attack = models.CharField(max_length=2, choices=ATTACK_CHOICES, null=True)
-    trusted_users = models.ManyToManyField(User, related_name='watches')
+    trusted_users = models.ManyToManyField(AppUser, related_name='watches')
     home_latitude = models.BigIntegerField(null=True)
     home_longitude = models.BigIntegerField(null=True)
 

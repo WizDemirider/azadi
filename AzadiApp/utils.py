@@ -29,19 +29,19 @@ def haversine(pos1, pos2):
 
     return {"km":km, "miles":mi}
 
-def send_mail():
+def send_mail(watch):
     try:
-        mail = EmailMessage('Emergency Alert', 'The concerned person maybe suffering from some problem contact and reach immediately', 'ankanarn@gmail.com', ['argankit@gmail.com'])
+        mail = EmailMessage('Emergency Alert: '+watch.get_type_of_attack_display(), watch.owner.username+' may need your help! Please contact them immediately!', 'ankanarn@gmail.com', [u.email for u in watch.trusted_users.all()])
         mail.send()
     except Exception as e:
         print(str(e))
         return False
     return True
 
-def send_sms():
+def send_sms(watch):
     try:
         client = Client(my_hidden_stuff.HKEY1, my_hidden_stuff.HKEY2)
-        message = client.messages.create(to='+917506402445', from_=my_hidden_stuff.HPHONE, body='The concerned person maybe suffering from some problem contact and reach immediately')
+        message = client.messages.create(to=recv, from_=my_hidden_stuff.HPHONE, body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
         for attr in dir(message):
             print("message.%s = %r" % (attr, getattr(message, attr)))
     except BadHeaderError:
@@ -51,5 +51,5 @@ def send_sms():
         return False
     return True
 
-def send_alerts():
-    return send_mail() and send_sms()
+def send_alerts(watch):
+    return send_mail(watch) and send_sms(watch)

@@ -106,7 +106,10 @@ class PostData(generics.GenericAPIView):
             if watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1:
                 watch.type_of_attack = 'o'
                 watch.save()
-                utils.send_mail()
+                utils.send_mail(watch)
+            elif watch.type_of_attack == 'o':
+                watch.type_of_attack = None
+                watch.save()
 
             if History.objects.filter(watch=watch, location_requested=True).exists():
                 last_req = History.objects.filter(watch=watch, location_requested=True).latest('timestamp')
@@ -163,7 +166,7 @@ class AttackPressed(generics.GenericAPIView):
         if watch.type_of_attack == None:
             watch.type_of_attack = 'p'
             watch.save()
-            utils.send_mail()
+            utils.send_mail(watch)
         else:
             watch.type_of_attack = None
             watch.save()
@@ -181,6 +184,6 @@ class FallDetected(generics.GenericAPIView):
         if fall:
             watch.type_of_attack = 'f'
             watch.save()
-            utils.send_mail()
+            utils.send_mail(watch)
 
         return HttpResponse(str(fall))
