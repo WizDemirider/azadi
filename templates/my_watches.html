@@ -49,9 +49,9 @@
                             <div class="col-xs-4"><b>Watch ID: {{watch.id}}</b></div>
                             <div class="col-xs-4">Owner: {{watch.owner}}</div>
                             {% if watch.type_of_attack %}
-                            <div class="col-xs-4">Attack: <span style="color: red;">{{watch.get_type_of_attack_display}}</span></div>
+                            <div class="col-xs-4">Status: <span style="color: red;">{{watch.get_type_of_attack_display}}</span></div>
                             {% else %}
-                            <div class="col-xs-4">Attack: <span style="color: rgb(85, 255, 0);">Safe</span></div>
+                            <div class="col-xs-4">Status: <span style="color: rgb(85, 255, 0);">Safe</span></div>
                             {% endif %}
                     </div></a>
                     <div class="card-text pl-2 pb-1 text-center">

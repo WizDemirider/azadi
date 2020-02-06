@@ -85,9 +85,7 @@ class PostData(generics.GenericAPIView):
         try:
             watch = Watch.objects.get(id=token)
         except Watch.DoesNotExist:
-            return JsonResponse({
-                'error_message': "Watch not found. Check the token sent."
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse("Watch not found. Check the token sent.", status=status.HTTP_400_BAD_REQUEST)
 
         owner = watch.owner
         new_data = History(watch=watch)
@@ -95,9 +93,8 @@ class PostData(generics.GenericAPIView):
 
         recv_data = request.body.decode()
         try:
-            fall, clat, clong, curr_hr = [float(val) for val in recv_data.split('&')]
+            clat, clong, curr_hr = [float(val) for val in recv_data.split('&')]
         except Exception:
-            fall = 0.0
             clat = 19.0968
             clong = 72.8517
             curr_hr = 0.0
@@ -105,6 +102,12 @@ class PostData(generics.GenericAPIView):
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
+
+            if watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1:
+                watch.type_of_attack = 'o'
+                watch.save()
+                utils.send_mail()
+
             if History.objects.filter(watch=watch, location_requested=True).exists():
                 last_req = History.objects.filter(watch=watch, location_requested=True).latest('timestamp')
                 if utils.haversine(new_data.get_coordinates(), last_req.get_coordinates())['km'] > 1:
@@ -146,11 +149,6 @@ class PostData(generics.GenericAPIView):
         #     watch.type_of_attack = None
         #     watch.save()
 
-        if fall:
-            watch.type_of_attack = 'f'
-            watch.save()
-            utils.send_alerts()
-
         if watch.type_of_attack != None:
             atk = '1'
         else:
@@ -165,8 +163,24 @@ class AttackPressed(generics.GenericAPIView):
         if watch.type_of_attack == None:
             watch.type_of_attack = 'p'
             watch.save()
-            utils.send_alerts()
+            utils.send_mail()
         else:
             watch.type_of_attack = None
             watch.save()
         return JsonResponse({})
+
+class FallDetected(generics.GenericAPIView):
+
+    def post(self, request, wid):
+        try:
+            watch = Watch.objects.get(id=wid)
+        except Watch.DoesNotExist:
+            return HttpResponse("Watch not found. Check the token sent.", status=status.HTTP_400_BAD_REQUEST)
+
+        fall = int(request.body.decode())
+        if fall:
+            watch.type_of_attack = 'f'
+            watch.save()
+            utils.send_mail()
+
+        return HttpResponse(str(fall))
