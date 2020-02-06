@@ -93,17 +93,18 @@ class PostData(generics.GenericAPIView):
 
         recv_data = request.body.decode()
         try:
-            clat, clong, curr_hr = [float(val) for val in recv_data.split('&')]
+            clat, clong, curr_hr, b_pressed = [float(val) for val in recv_data.split('&')]
         except Exception:
             clat = 19.0968
             clong = 72.8517
             curr_hr = 0.0
+            b_pressed = 1.0
         print("data", recv_data)
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
 
-            if watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1:
+            if watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1 and watch.type_of_attack != 'o':
                 watch.type_of_attack = 'o'
                 watch.save()
                 utils.send_mail(watch)
@@ -148,9 +149,9 @@ class PostData(generics.GenericAPIView):
             new_data.heartrate = random.randint(79, 85)
         new_data.save()
 
-        # if b_pressed == 1.0:
-        #     watch.type_of_attack = None
-        #     watch.save()
+        if b_pressed == 0.0:
+            watch.type_of_attack = None
+            watch.save()
 
         if watch.type_of_attack != None:
             atk = '1'
