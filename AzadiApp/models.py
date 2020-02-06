@@ -15,7 +15,6 @@ class Watch(models.Model):
     owner = models.ForeignKey(User, related_name='watch', on_delete=models.CASCADE)
     last_location = models.CharField(max_length=250, null=True, default=None)
     full_location = models.TextField(null=True, default=None)
-    under_attack = models.BooleanField(default=False)
     type_of_attack = models.CharField(max_length=2, choices=ATTACK_CHOICES, null=True)
     trusted_users = models.ManyToManyField(User, related_name='watches')
 
