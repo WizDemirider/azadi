@@ -24,9 +24,9 @@ def index(request):
 
 def signupUser(request):
     if request.method == 'POST':
-        username = escape(request.POST['username'])
-        raw_password = escape(request.POST['password1'])
-        raw_password2 = escape(request.POST['password2'])
+        username = escape(request.POST.get('username'))
+        raw_password = escape(request.POST.get('password1'))
+        raw_password2 = escape(request.POST.get('password2'))
         try:
             if raw_password == raw_password2 and len(raw_password) >= 6:
                 user = User.objects.create(username=username, password=raw_password)
@@ -44,8 +44,8 @@ def signupUser(request):
 
 def loginUser(request):
     if request.method == 'POST':
-        username = escape(request.POST['username'])
-        raw_password = escape(request.POST['password'])
+        username = escape(request.POST.get('username'))
+        raw_password = escape(request.POST.get('password'))
         user = authenticate(username=username, password=raw_password)
         if user is not None:
             login(request, user) # logs User in
@@ -61,7 +61,7 @@ def logoutUser(request):
 @login_required
 def my_watches(request):
     if request.method == 'POST':
-        wid = escape(request.POST['id'])
+        wid = escape(request.POST.get('id'))
         Watch.objects.create(id=wid, owner=request.user)
         success = True
     else:

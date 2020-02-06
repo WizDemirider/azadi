@@ -33,7 +33,7 @@ def send_alerts():
     # mail.send()
     try:
         client = Client('ACc56a907ed6141647a64a97541c6bb927', '47282bcfa151539b884f14673dfe31a6')
-        message = client.messages.create(to='+918779677344', from_='+16572543063', body='The concerned person maybe suffering from some problem contact and reach immediately')
+        message = client.messages.create(to='+917506402445', from_='+16572543063', body='The concerned person maybe suffering from some problem contact and reach immediately')
         for attr in dir(message):
             print("message.%s = %r" % (attr, getattr(message, attr)))
     except BadHeaderError:
