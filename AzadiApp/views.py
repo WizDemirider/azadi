@@ -25,11 +25,13 @@ def index(request):
 def signupUser(request):
     if request.method == 'POST':
         username = escape(request.POST.get('username'))
+        email = escape(request.POST.get('email'))
+        phone = escape(request.POST.get('phone'))
         raw_password = escape(request.POST.get('password1'))
         raw_password2 = escape(request.POST.get('password2'))
         try:
             if raw_password == raw_password2 and len(raw_password) >= 6:
-                user = User.objects.create(username=username, password=raw_password)
+                user = AppUser.objects.create(username=username, password=raw_password, email=email, phone=phone)
                 user.set_password(raw_password)
                 user.save()
                 login(request, user) # logs User in
@@ -104,7 +106,7 @@ class PostData(generics.GenericAPIView):
         if clat and clong:
             new_data.set_coordinates(clat, clong)
 
-            if watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1 and watch.type_of_attack != 'o':
+            if watch.track_location and watch.type_of_attack != 'o' and watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1:
                 watch.type_of_attack = 'o'
                 watch.save()
                 utils.send_mail(watch)
@@ -171,6 +173,14 @@ class AttackPressed(generics.GenericAPIView):
         else:
             watch.type_of_attack = None
             watch.save()
+        return JsonResponse({})
+
+class TrackLocationToggle(generics.GenericAPIView):
+
+    def get(self, request, wid):
+        watch = Watch.objects.get(id=wid)
+        watch.track_location = not watch.track_location
+        watch.save()
         return JsonResponse({})
 
 class FallDetected(generics.GenericAPIView):

@@ -6,14 +6,15 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-md-8 col-lg-6 card" style="margin-left: 30%;margin-top:10%;padding: 20px;">
+        <div class="col-xs-12 col-md-8 col-lg-6 card text-center" style="margin-left: 30%;margin-top:10%;padding: 20px;">
             <form method="POST">
                 {% csrf_token %}
-                <label for="Username">Username</label>
-                <input type="text" name="username" class="form-control"><br>
-                <label for="password">Password</label>
-                <input type="password" name="password" class="form-control"><br>
-                <button type="submit" class="btn btn-info" style="display: inline-block;">Submit</button>
+                <h2 class="pb-2">Login</h2>
+                <!-- <label for="Username">Username</label> -->
+                <input type="text" name="username" class="form-control" placeholder="Username"><br>
+                <!-- <label for="password">Password</label> -->
+                <input type="password" name="password" class="form-control" placeholder="Password"><br>
+                <button type="submit" class="btn btn-danger" style="display: inline-block;">Submit</button>
             </form>
         </div>
     </div>

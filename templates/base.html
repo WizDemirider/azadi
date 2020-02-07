@@ -44,6 +44,19 @@
                 </div>
                 <div class="sidebar-wrapper">
                     <ul class="nav">
+                        <li class="nav-item {% if request.path == '/login' %}active{% endif %}">
+                          <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fa fa-sign-in"></i>
+                            <p style="font-weight: 400;">Login</p>
+                          </a>
+                        </li>
+                        <li class="nav-item {% if request.path == '/signup' %}active{% endif %}">
+                          <a class="nav-link" href="{% url 'signup' %}">
+                            <i class="fa fa-user-plus"></i>
+                            <p style="font-weight: 400;">Signup</p>
+                          </a>
+                        </li>
+                        {% if request.user.is_authenticated %}
                         <li class="nav-item {% if request.path == '/my-watches' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'my-watches' %}">
                               <i class="material-icons">watch</i>
@@ -56,6 +69,7 @@
                               <p >Watch Data</p>
                             </a>
                           </li>
+                          {% endif %}
                     </ul>
                 </div>
             </div>
@@ -86,7 +100,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{% url 'signup' %}" class="nav-link">
-                                        <i class="fa fa-sign-in"></i>Sign Up
+                                        <i class="fa fa-user-plus"></i>Sign Up
                                     </a>
                                 </li>
                                 {% endif %}
