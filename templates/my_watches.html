@@ -10,6 +10,7 @@
   <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"
   type="text/javascript" charset="utf-8"></script>
   </script>
+ 
 {% endblock %}
 
 {% block heading %}My Watches{% endblock %}
@@ -54,6 +55,12 @@
                             {% else %}
                             <div class="col-xs-4">Status: <span style="color: rgb(85, 255, 0);">Safe</span></div>
                             {% endif %}
+                            <div class="col-xs-4">
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round" ></span>
+                                  </label>
+                            </div>
                     </div></a>
                     <div class="card-text pl-2 pb-1 text-center">
                         <button type="button" class="btn btn-danger" onclick="attack_pressed({{watch.id}})">{% if watch.type_of_attack %}Cancel{% else %}Simulate Attack{% endif %}</button>

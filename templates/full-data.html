@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block title %}Watch Data{% endblock %}
-
 {% block top %}
 
 {% endblock %}
@@ -27,7 +26,7 @@
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 card" style="height:300px;margin-top:0;">
-
+            <canvas id="myChart" width="525" height="300"></canvas>
         </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <table class="table"    >
@@ -50,5 +49,40 @@
             </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
+<script type="text/javascript">
+    var ctx = document.getElementById("myChart");
+    var myBarChart = new Chart(ctx, {
+    type: 'line',
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        responsive: false,
+    },
+    data: {
+        datasets: [
+            {
+                data: [3, 4, 6, 5, 7, 8, 4, 10],
+                label: "Heart Rate",
+                borderColor: "blue",
+                hoverBackgroundColor: "red",
+                fill: true
+            }
+        ],
+        labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+    }
+});
+    var chart = new ApexCharts(
+    document.querySelector("#myChart"),
+    options
+);
+chart.render();
+</script>
 
 {% endblock %}
