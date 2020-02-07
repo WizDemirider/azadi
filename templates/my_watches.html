@@ -18,22 +18,22 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-md-8 col-lg-6">
+        <div class="col-xs-12 col-md-8 col-lg-6 card" style="height:230px;">
             {% if success %}
                 <div class="alert alert-success">Watch added!</div>
             {% endif %}
-            <h3 style="border-bottom:1.5px solid #9c27b0;">Enter watch ID to add</h3>
+            <h3 style="border-bottom:1.5px solid #f44336;font-weight:400;">Enter watch ID to add</h3>
             <form method="POST">
                 {% csrf_token %}
                 <label for="id">Watch ID</label>
-                <input type="text" name="id" class="form-control"><br>
+                <input type="text" name="id" class="form-control" style="background-image: linear-gradient(0deg,#00bcd4 2px,rgba(156,39,176,0) 0),linear-gradient(0deg,#d2d2d2 1px,hsla(0,0%,82%,0) 0);"><br>
                 <button type="submit" class="btn btn-info">Submit</button>
             </form>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 col-lg-12">
-            <h3 style="border-bottom:1.5px solid #9c27b0;">Your Watches</h3>
+            <h3 style="border-bottom:1.5px solid #f44336;font-weight:400;">Your Watches</h3>
         </div>
         {% for watch in watches %}  
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -106,7 +106,7 @@
         });
 
         var animatedSvg =
-        '<svg height="100" width="100"><circle cx="15" cy="15" r="10" stroke="black" stroke-width="3" fill="blue" /></svg>';
+        '<svg height="100" width="100"><circle cx="15" cy="15" r="10" stroke="black" stroke-width="3" fill="#00bcd4" /></svg>';
 
         // Create an icon object, an object with geographic coordinates and a marker:
         var icon = new H.map.DomIcon(animatedSvg),
