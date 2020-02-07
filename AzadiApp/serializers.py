@@ -10,7 +10,7 @@ class WatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Watch
-        fields = ('id', 'owner', 'coordinates', 'type_of_attack', 'under_attack', 'get_type_of_attack_display', 'owner_phone')
+        fields = ('id', 'owner', 'coordinates', 'type_of_attack', 'under_attack', 'get_type_of_attack_display', 'owner_phone', 'track_location')
 
     def get_location(self, watch):
         try:

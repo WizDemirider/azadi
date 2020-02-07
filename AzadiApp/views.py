@@ -104,7 +104,7 @@ class PostData(generics.GenericAPIView):
         if clat and clong:
             new_data.set_coordinates(clat, clong)
 
-            if watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1 and watch.type_of_attack != 'o':
+            if watch.track_location and watch.type_of_attack != 'o' and watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1:
                 watch.type_of_attack = 'o'
                 watch.save()
                 utils.send_mail(watch)
@@ -171,6 +171,14 @@ class AttackPressed(generics.GenericAPIView):
         else:
             watch.type_of_attack = None
             watch.save()
+        return JsonResponse({})
+
+class TrackLocationToggle(generics.GenericAPIView):
+
+    def get(self, request, wid):
+        watch = Watch.objects.get(id=wid)
+        watch.track_location = not watch.track_location
+        watch.save()
         return JsonResponse({})
 
 class FallDetected(generics.GenericAPIView):

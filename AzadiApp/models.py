@@ -24,6 +24,7 @@ class Watch(models.Model):
     trusted_users = models.ManyToManyField(AppUser, related_name='watches')
     home_latitude = models.BigIntegerField(null=True)
     home_longitude = models.BigIntegerField(null=True)
+    track_location = models.BooleanField(default=False)
 
     def get_home_coordinates(self):
         if self.home_latitude and self.home_longitude:
