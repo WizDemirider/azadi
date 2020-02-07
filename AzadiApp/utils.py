@@ -9,6 +9,7 @@ import time
 from django.shortcuts import render
 from twilio.rest import Client
 from pprint import pprint
+from . import my_hidden_stuff
 
 def haversine(pos1, pos2):
     lat1 = float(pos1[0])
@@ -28,14 +29,27 @@ def haversine(pos1, pos2):
 
     return {"km":km, "miles":mi}
 
-def send_alerts():
-    mail = EmailMessage('Fall Alert', 'The concerned person maybe suffering from some problem contact and reach immediately', 'ankanarn@gmail.com', ['argankit@gmail.com'])
-    # mail.send()
+def send_mail(watch):
     try:
-        client = Client('ACc56a907ed6141647a64a97541c6bb927', '47282bcfa151539b884f14673dfe31a6')
-        message = client.messages.create(to='+917506402445', from_='+16572543063', body='The concerned person maybe suffering from some problem contact and reach immediately')
+        mail = EmailMessage('Emergency Alert: '+watch.get_type_of_attack_display(), watch.owner.username+' may need your help! Please contact them immediately!', 'ankanarn@gmail.com', [u.email for u in watch.trusted_users.all()])
+        mail.send()
+    except Exception as e:
+        print(str(e))
+        return False
+    return True
+
+def send_sms(watch):
+    try:
+        client = Client(my_hidden_stuff.HKEY1, my_hidden_stuff.HKEY2)
+        message = client.messages.create(to=recv, from_=my_hidden_stuff.HPHONE, body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
         for attr in dir(message):
             print("message.%s = %r" % (attr, getattr(message, attr)))
     except BadHeaderError:
         return False
+    except Exception as e:
+        print(str(e))
+        return False
     return True
+
+def send_alerts(watch):
+    return send_mail(watch) and send_sms(watch)

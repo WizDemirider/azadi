@@ -17,6 +17,13 @@
             
             <span>Owner: {{watch_json.owner}}</span>
             <span>Location: {{watch.full_location}}</span>
+            <span>Home: {{watch.get_home_coordinates.0}}, {{watch.get_home_coordinates.1}}</span><br>
+            <span>Trusted Contacts: </span><br>
+            <ul>
+                {% for contact in watch.trusted_users.all %}
+                <li>{{contact.username}}</li>
+                {% endfor %}
+            </ul>
         </div>
         <div class="col-xs-12 col-md-8 col-lg-8">
             <table class="table" style="border: 2px solid #9c27b0;">
