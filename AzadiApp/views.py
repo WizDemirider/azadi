@@ -77,7 +77,7 @@ def my_watches(request):
 def fullData(request, wid):
     watch = Watch.objects.get(id=wid)
     history = History.objects.filter(watch=watch).order_by('-timestamp')
-    return render(request, 'full-data.html', {'watch': watch, 'history': history[:15], 'watch_json': WatchSerializer(watch).data});
+    return render(request, 'full-data.html', {'watch': watch, 'history': history[:15], 'watch_json': WatchSerializer(watch).data, 'heartrates': [h.heartrate for h in history[:15]]});
 
 
 class PostData(generics.GenericAPIView):
@@ -195,6 +195,7 @@ class FallDetected(generics.GenericAPIView):
         if fall:
             watch.type_of_attack = 'f'
             watch.save()
+            print("Fall Detected")
             utils.send_mail(watch)
 
         return HttpResponse(str(fall))
