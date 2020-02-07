@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 card" style="height:300px;margin-top:0;">
             <h3 style="margin-top:30px;margin-bottom:10px;font-weight: 350;border-bottom: 2px solid  #00bcd4;"> Watch ID: {{watch.id}} </h3>
-            
+
             <span>Owner: {{watch_json.owner}}</span>
             <span>Location: {{watch.full_location}}</span>
             <span>Home: {{watch.get_home_coordinates.0}}, {{watch.get_home_coordinates.1}}</span><br>
@@ -68,14 +68,14 @@
     data: {
         datasets: [
             {
-                data: [3, 4, 6, 5, 7, 8, 4, 10],
+                data: {{heartrates}},
                 label: "Heart Rate",
                 borderColor: "blue",
                 hoverBackgroundColor: "red",
                 fill: true
             }
         ],
-        labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+        labels: {{timestamps}},
     }
 });
     var chart = new ApexCharts(
