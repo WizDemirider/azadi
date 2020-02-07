@@ -22,11 +22,11 @@
             {% if success %}
                 <div class="alert alert-success">Watch added!</div>
             {% endif %}
-            <h3 style="border-bottom:1.5px solid #f44336;font-weight:400;">Enter watch ID to add</h3>
+            <h3 style="border-bottom:1.5px solid #f44336;font-weight:400;margin-bottom:10px;">Enter watch ID to add</h3>
             <form method="POST">
                 {% csrf_token %}
-                <label for="id">Watch ID</label>
-                <input type="text" name="id" class="form-control" style="background-image: linear-gradient(0deg,#00bcd4 2px,rgba(156,39,176,0) 0),linear-gradient(0deg,#d2d2d2 1px,hsla(0,0%,82%,0) 0);"><br>
+                <!-- <label for="id">Watch ID</label> -->
+                <input type="text" name="id" placeholder="Watch ID"class="form-control" style="height:45px;background-image: linear-gradient(0deg,#00bcd4 2px,rgba(156,39,176,0) 0),linear-gradient(0deg,#d2d2d2 1px,hsla(0,0%,82%,0) 0);"><br>
                 <button type="submit" class="btn btn-info">Submit</button>
             </form>
         </div>
