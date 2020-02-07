@@ -25,11 +25,13 @@ def index(request):
 def signupUser(request):
     if request.method == 'POST':
         username = escape(request.POST.get('username'))
+        email = escape(request.POST.get('email'))
+        phone = escape(request.POST.get('phone'))
         raw_password = escape(request.POST.get('password1'))
         raw_password2 = escape(request.POST.get('password2'))
         try:
             if raw_password == raw_password2 and len(raw_password) >= 6:
-                user = User.objects.create(username=username, password=raw_password)
+                user = AppUser.objects.create(username=username, password=raw_password, email=email, phone=phone)
                 user.set_password(raw_password)
                 user.save()
                 login(request, user) # logs User in
