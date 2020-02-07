@@ -12,7 +12,7 @@ ps = PorterStemmer()
 lemmatizer = WordNetLemmatizer()
 
 def detect_problem():
-   
+
     def rem_punct(my_str):
         punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         no_punct = ""
@@ -46,7 +46,7 @@ def detect_problem():
     pos = []
     problem_list = []
     pos = nltk.pos_tag(lem_sentence)
-    print(pos)
+    # print(pos)
     for k, v in pos:
         if v == "NN" or v == "NNS":
             max_score = 0
@@ -61,7 +61,7 @@ def detect_problem():
                         problem = d
                         word = k
                 problem_list.append(problem)
-                # print(problem, word, sim)    
+                # print(problem, word, sim)
             except:
                 pass
     solution = []
@@ -73,7 +73,7 @@ def detect_problem():
             solution.append("police")
         else:
             solution.append("firebrigade")
-        
+
     return solution
 
-print(detect_problem())
+# print(detect_problem())

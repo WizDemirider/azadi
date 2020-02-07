@@ -17,6 +17,7 @@ from . import utils
 from .models import *
 from .serializers import *
 import random
+from . import nlp
 
 
 def index(request):
@@ -159,6 +160,8 @@ class PostData(generics.GenericAPIView):
             atk = '1'
         else:
             atk = '0'
+
+        # print(nlp.detect_problem())
 
         return HttpResponse(atk+(new_data.timestamp+timedelta(hours=5, minutes=30)).strftime('%d/%m/%y')+(new_data.timestamp+timedelta(hours=5, minutes=30)).strftime('%I:%M %p')+str(new_data.heartrate)+loc)
 
