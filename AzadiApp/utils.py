@@ -40,8 +40,8 @@ def send_mail(watch):
 
 def send_sms(watch):
     try:
-        client = Client(my_hidden_stuff.HKEY1, my_hidden_stuff.HKEY2)
-        message = client.messages.create(to=recv, from_=my_hidden_stuff.HPHONE, body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
+        client = Client(my_hidden_stuff.ANKEY1, my_hidden_stuff.ANKEY2)
+        message = client.messages.create(to=[u.phone for u in watch.trusted_users.all()], from_=my_hidden_stuff.ANPHONE, body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
         for attr in dir(message):
             print("message.%s = %r" % (attr, getattr(message, attr)))
     except BadHeaderError:

@@ -109,7 +109,7 @@ class PostData(generics.GenericAPIView):
             if watch.track_location and watch.type_of_attack != 'o' and watch.get_home_coordinates() and utils.haversine(new_data.get_coordinates(), watch.get_home_coordinates())['km'] > 1:
                 watch.type_of_attack = 'o'
                 watch.save()
-                utils.send_mail(watch)
+                utils.send_alerts(watch)
             elif watch.type_of_attack == 'o':
                 watch.type_of_attack = None
                 watch.save()
@@ -169,7 +169,7 @@ class AttackPressed(generics.GenericAPIView):
         if watch.type_of_attack == None:
             watch.type_of_attack = 'p'
             watch.save()
-            utils.send_mail(watch)
+            utils.send_alerts(watch)
         else:
             watch.type_of_attack = None
             watch.save()
@@ -196,6 +196,6 @@ class FallDetected(generics.GenericAPIView):
             watch.type_of_attack = 'f'
             watch.save()
             print("Fall Detected")
-            utils.send_mail(watch)
+            utils.send_alerts(watch)
 
         return HttpResponse(str(fall))
