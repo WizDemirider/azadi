@@ -14,6 +14,7 @@
 
 {% block heading %}My Watches{% endblock %}
 
+
 {% block content %}
 <div class="container">
     <div class="row">
@@ -21,7 +22,7 @@
             {% if success %}
                 <div class="alert alert-success">Watch added!</div>
             {% endif %}
-            <h3>Enter watch ID to add</h3>
+            <h3 style="border-bottom:1.5px solid #9c27b0;">Enter watch ID to add</h3>
             <form method="POST">
                 {% csrf_token %}
                 <label for="id">Watch ID</label>
@@ -32,17 +33,17 @@
     </div>
     <div class="row">
         <div class="col-xs-12 col-lg-12">
-            <h3>Your Watches</h3>
+            <h3 style="border-bottom:1.5px solid #9c27b0;">Your Watches</h3>
         </div>
-        {% for watch in watches %}
-        <div class="col-xs-12 col-md-8 col-lg-6">
+        {% for watch in watches %}  
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div class="card" style="padding: 0 0 0 0;">
                 <div class="card-body" style="padding: 0 0 0 0;">
 
                     {% if watch.coordinates %}
                     <div style="width: 540px; height: 250px" class="card-img-top" id="map{{watch.id}}">
                     {% else %}
-                    <div class="card-body pt-1 pl-2">No Location Available</div>
+                    <div class="card-body pt-1 pl-2" style="width: 540px; height: 250px">No Location Available</div>
                     {% endif %}
                     </div>
                     <a href="{% url 'full-data' watch.id %}"><div class="card-title pt-2 pl-2 pb-1">

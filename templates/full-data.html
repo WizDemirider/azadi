@@ -12,21 +12,22 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-md-8 col-lg-4">
-            <h3> Watch ID: {{watch.id}} </h3>
-            <span>Owner: {{watch_json.owner}}</span><br>
+        <div class="col-xs-12 col-md-8 col-lg-4 card" style="height:200px;margin-top:0;">
+            <h3 style="margin-top:30px;margin-bottom:10px;font-weight: 350;border-bottom: 2px solid  #00bcd4;"> Watch ID: {{watch.id}} </h3>
+            
+            <span>Owner: {{watch_json.owner}}</span>
             <span>Location: {{watch.full_location}}</span>
         </div>
         <div class="col-xs-12 col-md-8 col-lg-8">
-            <table class="table">
-                <tr>
+            <table class="table" style="border: 2px solid #9c27b0;">
+                <tr style="border-bottom: 2px solid #dbdbdb;">
                     <th>Timestamp</th>
                     <th>Heartrate</th>
                     <th>Latitude</th>
                     <th>Longitude</th>
                 </tr>
             {% for data in history %}
-                <tr>
+                <tr style="border-bottom: 1px solid #dbdbdb;">
                     <td>{{data.timestamp|date:"M d, Y h:i:s A"}}</td>
                     <td>{{data.heartrate}}</td>
                     <td>{{data.get_coordinates.0}}</td>

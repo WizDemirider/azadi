@@ -38,8 +38,8 @@
                     Tip 2: you can also add an image using data-image tag
                     -->
                 <div class="logo">
-                    <a href="http://www.creative-tim.com" class="simple-text logo-normal">
-                    <!-- <img src="{% static 'img/woman-icon.png' %}" width="15%"> Azadi --><i class="fa fa-heart"></i> WeCare
+                    <a href="#" class="simple-text logo-normal">
+                    <!-- <img src="{% static 'img/woman-icon.png' %}" width="15%"> Azadi --><i class="fa fa-heartbeat" style="color:#f44336;"></i> <span style="color:#9c27b0">We</span>Care
                     </a>
                 </div>
                 <div class="sidebar-wrapper">
@@ -47,13 +47,13 @@
                         <li class="nav-item {% if request.path == '/my-watches' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'my-watches' %}">
                               <i class="material-icons">watch</i>
-                              <p>My Watches</p>
+                              <p style="font-weight: 400;">My Watches</p>
                             </a>
                           </li>
                           <li class="nav-item {% if '/full-data' in request.path %}active{% endif %}">
                             <a class="nav-link" href="#">
                               <i class="material-icons">timeline</i>
-                              <p>Watch Data</p>
+                              <p >Watch Data</p>
                             </a>
                           </li>
                     </ul>
@@ -61,19 +61,19 @@
             </div>
             <div class="main-panel">
                 <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
-                    <div class="container-fluid">
+                <nav class="navbar navbar-expand-lg navbar-absolute fixed-top " style="background-color: #00bcd4 !important;border-radius: 7px;">
+                    <div class="container-fluid" >
                         <div class="navbar-wrapper">
-                            <span class="navbar-brand">{% block heading %}{% endblock %}</span>
+                            <span class="navbar-brand" style="color: #fff;font-weight: 400;">{% block heading %}{% endblock %}</span>
                         </div>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="sr-only">Toggle navigation</span>
-                        <span class="navbar-toggler-icon icon-bar"></span>
-                        <span class="navbar-toggler-icon icon-bar"></span>
-                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"  style="background-color: #fff !important;"></span>
+                        <span class="navbar-toggler-icon icon-bar"  style="background-color: #fff !important;"></span>
+                        <span class="navbar-toggler-icon icon-bar"  style="background-color: #fff !important;"></span>
                         </button>
                         <div class="collapse navbar-collapse justify-content-end">
-                            <ul class="navbar-nav">
+                            <ul class="navbar-nav" style="color: #fff;">
                                 {% if request.user.is_authenticated %}
                                 <li class="nav-item">
                                     <i class="fa fa-user"></i> {{ request.user.username }}
