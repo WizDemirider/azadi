@@ -17,7 +17,7 @@ from . import utils
 from .models import *
 from .serializers import *
 import random
-from . import nlp
+#from . import nlp
 
 
 def index(request):
