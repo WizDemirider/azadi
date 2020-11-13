@@ -9,7 +9,7 @@ import time
 from django.shortcuts import render
 from twilio.rest import Client
 from pprint import pprint
-from . import my_hidden_stuff
+import Azadi.settings as settings
 
 def haversine(pos1, pos2):
     lat1 = float(pos1[0])
@@ -40,7 +40,7 @@ def send_mail(watch):
 
 def send_sms(watch):
     try:
-        client = Client(my_hidden_stuff.ANKEY1, my_hidden_stuff.ANKEY2)
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         message = client.messages.create(to=[u.phone for u in watch.trusted_users.all()], from_=my_hidden_stuff.ANPHONE, body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
         for attr in dir(message):
             print("message.%s = %r" % (attr, getattr(message, attr)))

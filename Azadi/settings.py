@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import AzadiApp.my_hidden_stuff as hidden_stuff
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -87,8 +87,11 @@ EMAIL_HOST_USER = 'ankanarn@gmail.com'
 EMAIL_HOST_PASSWORD = 'ap@12345'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-TWILIO_ACCOUNT_SID = hidden_stuff.ANKEY1
-TWILIO_AUTH_TOKEN = hidden_stuff.ANKEY2
+
+hidden_stuff = json.loads(open("my_hidden_stuff.json"))
+
+TWILIO_ACCOUNT_SID = hidden_stuff['ANKEY1']
+TWILIO_AUTH_TOKEN = hidden_stuff['ANKEY2']
 DJANGO_TWILIO_FORGERY_PROTECTION = False
 DJANGO_TWILIO_BLACKLIST_CHECK = True
 
