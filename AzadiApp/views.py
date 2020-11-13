@@ -78,7 +78,7 @@ def my_watches(request):
 def fullData(request, wid):
     watch = Watch.objects.get(id=wid)
     history = History.objects.filter(watch=watch).order_by('-timestamp')
-    return render(request, 'full-data.html', {'watch': watch, 'history': history[:15], 'watch_json': WatchSerializer(watch).data, 'heartrates': [h.heartrate for h in history[:15]], 'timestamps': [float((h.timestamp+timedelta(hours=5, minutes=30)).strftime('%I.%M')) for h in history[:15]]});
+    return render(request, 'full-data.html', {'watch': watch, 'history': history[:15], 'watch_json': WatchSerializer(watch).data, 'heartrates': [h.heartrate for h in history[:15]], 'timestamps': [(h.timestamp+timedelta(hours=5, minutes=30)).strftime('%I:%M:%S') for h in history[:15:-1]]});
 
 
 class PostData(generics.GenericAPIView):

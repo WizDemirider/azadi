@@ -31,7 +31,7 @@ def haversine(pos1, pos2):
 
 def send_mail(watch):
     try:
-        mail = EmailMessage('Emergency Alert: '+watch.get_type_of_attack_display(), watch.owner.username+' may need your help! Please contact them immediately!', 'ankanarn@gmail.com', [u.email for u in watch.trusted_users.all()])
+        mail = EmailMessage('Emergency Alert: '+watch.get_type_of_attack_display(), watch.owner.username+' may need your help! Please contact them immediately! Current Location: '+watch.full_location, 'ankanarn@gmail.com', [u.email for u in watch.trusted_users.all()])
         mail.send()
     except Exception as e:
         print(str(e))
