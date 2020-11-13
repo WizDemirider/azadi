@@ -152,4 +152,3 @@ LOGIN_URL = '/login'
 
 AUTH_USER_MODEL = 'AzadiApp.AppUser'
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
