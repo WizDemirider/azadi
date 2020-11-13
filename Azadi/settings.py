@@ -88,7 +88,7 @@ EMAIL_HOST_PASSWORD = 'ap@12345'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-hidden_stuff = json.loads(open("my_hidden_stuff.json"))
+hidden_stuff = json.loads(open("AzadiApp/my_hidden_stuff.json").read())
 
 TWILIO_ACCOUNT_SID = hidden_stuff['ANKEY1']
 TWILIO_AUTH_TOKEN = hidden_stuff['ANKEY2']
