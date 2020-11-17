@@ -10,6 +10,7 @@ from rest_framework import generics, status
 from datetime import timedelta
 from . import utils
 
+import os
 from .models import *
 from .serializers import *
 import random
@@ -49,19 +50,16 @@ class PostData(generics.GenericAPIView):
         except Watch.DoesNotExist:
             return HttpResponse("Watch not found. Check the token sent.", status=status.HTTP_400_BAD_REQUEST)
 
-        owner = watch.owner
         new_data = History(watch=watch)
         loc = "No coordinates sent."
 
         recv_data = request.body.decode()
         try:
-            clat, clong, curr_hr, b_pressed = [float(val) for val in recv_data.split('&')]
+            clat, clong, curr_hr, b_pressed, fall = [float(val) for val in recv_data.split('&')]
         except Exception:
-            clat = 19.0968
-            clong = 72.8517
-            curr_hr = 0.0
-            b_pressed = 1.0
-        print("data", recv_data)
+            return HttpResponse("Data format is wrong, expected lat, long, hr, button_pressed and fall_detected.", status=status.HTTP_400_BAD_REQUEST)
+        if os.environ['DEBUG']:
+            print("data", recv_data)
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
@@ -74,8 +72,9 @@ class PostData(generics.GenericAPIView):
                 watch.type_of_attack = None
                 watch.save()
 
-            if History.objects.filter(watch=watch, location_requested=True).exists():
-                last_req = History.objects.filter(watch=watch, location_requested=True).latest('timestamp')
+            recent_history = History.objects.filter(watch=watch, location_requested=True)
+            if recent_history.exists():
+                last_req = recent_history.latest('timestamp')
                 if utils.haversine(new_data.get_coordinates(), last_req.get_coordinates())['km'] > 1:
                     watch.last_location, watch.full_location = utils.get_location_from_coords(clat, clong)
                     watch.save()
@@ -90,8 +89,12 @@ class PostData(generics.GenericAPIView):
         if curr_hr:
             new_data.heartrate = int(curr_hr)
         else:
-            new_data.heartrate = random.randint(79, 85)
+            new_data.heartrate = None
         new_data.save()
+
+        if fall == 1.0:
+            watch.type_of_attack = 'f'
+            watch.save()
 
         if b_pressed == 0.0:
             watch.type_of_attack = None
@@ -103,8 +106,9 @@ class PostData(generics.GenericAPIView):
             atk = '0'
 
         # print(nlp.detect_problem())
+        timestamp = new_data.timestamp+timedelta(hours=5, minutes=30)
 
-        return HttpResponse(atk+(new_data.timestamp+timedelta(hours=5, minutes=30)).strftime('%d/%m/%y')+(new_data.timestamp+timedelta(hours=5, minutes=30)).strftime('%I:%M %p')+str(new_data.heartrate)+loc)
+        return HttpResponse(atk+timestamp.strftime('%d/%m/%y')+timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc)
 
 class AttackPressed(generics.GenericAPIView):
 
@@ -127,19 +131,19 @@ class TrackLocationToggle(generics.GenericAPIView):
         watch.save()
         return JsonResponse({})
 
-class FallDetected(generics.GenericAPIView):
+# class FallDetected(generics.GenericAPIView):
 
-    def post(self, request, wid):
-        try:
-            watch = Watch.objects.get(id=wid)
-        except Watch.DoesNotExist:
-            return HttpResponse("Watch not found. Check the token sent.", status=status.HTTP_400_BAD_REQUEST)
+#     def post(self, request, wid):
+#         try:
+#             watch = Watch.objects.get(id=wid)
+#         except Watch.DoesNotExist:
+#             return HttpResponse("Watch not found. Check the token sent.", status=status.HTTP_400_BAD_REQUEST)
 
-        fall = int(request.body.decode())
-        if fall:
-            watch.type_of_attack = 'f'
-            watch.save()
-            print("Fall Detected")
-            utils.send_alerts(watch)
+#         fall = int(request.body.decode())
+#         if fall:
+#             watch.type_of_attack = 'f'
+#             watch.save()
+#             print("Fall Detected")
+#             utils.send_alerts(watch)
 
-        return HttpResponse(str(fall))
+#         return HttpResponse(str(fall))

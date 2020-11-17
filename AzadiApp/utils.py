@@ -1,16 +1,10 @@
 from math import pi,sqrt,sin,cos,atan2
 
 from django.core.mail import BadHeaderError, send_mail,EmailMessage
-from django.http import HttpResponse, HttpResponseRedirect
-import urllib.request
-import urllib.parse
-from twilio.rest import TwilioRestClient
-import time
-from django.shortcuts import render
 from twilio.rest import Client
-from pprint import pprint
 import Azadi.settings as settings
 import os, requests
+from background_task import background
 
 def haversine(pos1, pos2):
     lat1 = float(pos1[0])
@@ -52,6 +46,7 @@ def send_sms(watch):
         return False
     return True
 
+@background(schedule=30)
 def send_alerts(watch):
     return send_mail(watch) and send_sms(watch)
 
