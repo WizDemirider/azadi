@@ -80,11 +80,12 @@ class PostData(generics.GenericAPIView):
                     watch.last_location, watch.full_location = utils.get_location_from_coords(clat, clong)
                     watch.save()
                     new_data.location_requested = True
-                loc = watch.last_location
             else:
                 watch.last_location, watch.full_location = utils.get_location_from_coords(clat, clong)
                 watch.save()
                 new_data.location_requested = True
+
+            loc = watch.last_location
 
         if curr_hr:
             new_data.heartrate = int(curr_hr)
