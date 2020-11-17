@@ -64,5 +64,5 @@ def get_location_from_coords(lat, long):
         else:
             loc = data[0]["components"]["city"]
     except Exception:
-        raise Exception("data:"+str(res.json()))
+        raise Exception("key:"+os.environ['geocage_key']+" data:"+str(res.json()))
     return loc, data[0]["formatted"]
