@@ -57,12 +57,13 @@ def send_alerts(watch):
 
 def get_location_from_coords(lat, long):
     try:
-        res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(lat)+'+'+str(long)+'&key='+os.environ['geocage_key'])
+        url = 'https://api.opencagedata.com/geocode/v1/json?q='+str(lat)+'+'+str(long)+'&key='+os.environ['geocage_key']
+        res = requests.get(url)
         data = res.json()['results']
         if 'county' in data[0]['components']:
             loc = data[0]["components"]["county"]
         else:
             loc = data[0]["components"]["city"]
     except Exception:
-        raise Exception("key:"+os.environ['geocage_key']+" data:"+str(res.json()))
+        raise Exception("key:"+url+" data:"+str(res.json()))
     return loc, data[0]["formatted"]
