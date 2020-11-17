@@ -108,7 +108,7 @@ class PostData(generics.GenericAPIView):
         # print(nlp.detect_problem())
         timestamp = new_data.timestamp+timedelta(hours=5, minutes=30)
 
-        return HttpResponse(atk+timestamp.strftime('%d/%m/%y')+timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc)
+        return HttpResponse(atk+timestamp.strftime('%d/%m/%y')+timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc+recv_data)
 
 class AttackPressed(generics.GenericAPIView):
 
