@@ -8,7 +8,6 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework import generics, status
 
 from datetime import timedelta
-import requests
 from . import utils
 
 from .models import *
@@ -78,36 +77,14 @@ class PostData(generics.GenericAPIView):
             if History.objects.filter(watch=watch, location_requested=True).exists():
                 last_req = History.objects.filter(watch=watch, location_requested=True).latest('timestamp')
                 if utils.haversine(new_data.get_coordinates(), last_req.get_coordinates())['km'] > 1:
-                    res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
-                    data = res.json()['results']
-                    # loc = [location['formatted'] for location in data]
-                    if 'county' in data[0]['components']:
-                        loc = data[0]["components"]["county"]
-                        watch.last_location = data[0]["components"]["county"]
-                    else:
-                        loc = data[0]["components"]["city"]
-                        watch.last_location = data[0]["components"]["city"]
-                    watch.full_location = data[0]["formatted"]
+                    watch.last_location, watch.full_location = utils.get_location_from_coords(clat, clong)
                     watch.save()
                     new_data.location_requested = True
-                else:
-                    loc = watch.last_location
+                loc = watch.last_location
             else:
-                res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
-                data = res.json()['results']
-                # loc = [location['formatted'] for location in data]
-                try:
-                    if 'county' in data[0]['components']:
-                        loc = data[0]["components"]["county"]
-                        watch.last_location = data[0]["components"]["county"]
-                    else:
-                        loc = data[0]["components"]["city"]
-                        watch.last_location = data[0]["components"]["city"]
-                    watch.full_location = data[0]["formatted"]
-                    watch.save()
-                    new_data.location_requested = True
-                except Exception:
-                    return HttpResponse(str(data))
+                watch.last_location, watch.full_location = utils.get_location_from_coords(clat, clong)
+                watch.save()
+                new_data.location_requested = True
 
         if curr_hr:
             new_data.heartrate = int(curr_hr)

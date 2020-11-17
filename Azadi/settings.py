@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import json
 import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -90,10 +89,8 @@ EMAIL_HOST_PASSWORD = 'ap@12345'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-hidden_stuff = json.loads(open("AzadiApp/my_hidden_stuff.json").read())
-
-TWILIO_ACCOUNT_SID = hidden_stuff['ANKEY1']
-TWILIO_AUTH_TOKEN = hidden_stuff['ANKEY2']
+TWILIO_ACCOUNT_SID = os.environ['ANKEY1']
+TWILIO_AUTH_TOKEN = os.environ['ANKEY2']
 DJANGO_TWILIO_FORGERY_PROTECTION = False
 DJANGO_TWILIO_BLACKLIST_CHECK = True
 

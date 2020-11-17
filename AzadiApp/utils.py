@@ -10,6 +10,7 @@ from django.shortcuts import render
 from twilio.rest import Client
 from pprint import pprint
 import Azadi.settings as settings
+import os, requests
 
 def haversine(pos1, pos2):
     lat1 = float(pos1[0])
@@ -41,7 +42,7 @@ def send_mail(watch):
 def send_sms(watch):
     try:
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        message = client.messages.create(to=[u.phone for u in watch.trusted_users.all()], from_=my_hidden_stuff.ANPHONE, body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
+        message = client.messages.create(to=[u.phone for u in watch.trusted_users.all()], from_=os.environ['ANPHONE'], body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
         for attr in dir(message):
             print("message.%s = %r" % (attr, getattr(message, attr)))
     except BadHeaderError:
@@ -53,3 +54,12 @@ def send_sms(watch):
 
 def send_alerts(watch):
     return send_mail(watch) and send_sms(watch)
+
+def get_location_from_coords(lat, long):
+    res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(lat)+'+'+str(long)+'&key='+os.environ['geocage_key'])
+    data = res.json()['results']
+    if 'county' in data[0]['components']:
+        loc = data[0]["components"]["county"]
+    else:
+        loc = data[0]["components"]["city"]
+    return loc, data[0]["formatted"]

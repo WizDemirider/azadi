@@ -1,6 +1,5 @@
 db.sqlite3
 __pycache__
 Pipfile
-my_hidden_stuff.json
 staticfiles/*
 .env
