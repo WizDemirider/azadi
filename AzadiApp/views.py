@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.utils.html import escape
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg, StdDev
 
 from django.http import HttpResponse, JsonResponse
 from rest_framework import generics, status
@@ -46,6 +47,15 @@ def fullData(request, wid):
 
 class PostData(generics.GenericAPIView):
     # permission_classes = (AllowAny,)
+
+    def analyze_heartrate(watch, current_hr):
+        history = History.objects.filter(watch=watch)
+        mean = history.aggregate(Avg('heartrate'))
+        stddev = history.aggregate(StdDev('heartrate'))
+        if stddev < abs(current_hr - mean):
+            watch.type_of_attack = 'h'
+            watch.save()
+            utils.send_alerts(watch.id)
 
     def post(self, request, wid):
         try:
@@ -92,7 +102,7 @@ class PostData(generics.GenericAPIView):
         if curr_hr:
             new_data.heartrate = int(curr_hr)
             # analyse heartrate
-            utils.send_alerts(watch.id)
+            self.analyze_heartrate(watch, int(curr_hr))
         else:
             new_data.heartrate = None
         new_data.save()

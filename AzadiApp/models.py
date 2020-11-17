@@ -6,9 +6,9 @@ from django.contrib.auth.models import User, AbstractUser
 coordinates_scale = 1000000
 
 ATTACK_CHOICES = (
-    ('p', "physical attack"),
+    ('p', "simulated attack"),
     ('f', "fall detected"),
-    ('h', "heart attack"),
+    ('h', "heartrate spike"),
     ('o', "Outside Range"),
 )
 
