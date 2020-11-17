@@ -48,7 +48,7 @@ def fullData(request, wid):
 class PostData(generics.GenericAPIView):
     # permission_classes = (AllowAny,)
 
-    def analyze_heartrate(watch, current_hr):
+    def analyze_heartrate(self, watch, current_hr):
         history = History.objects.filter(watch=watch)
         mean = history.aggregate(Avg('heartrate'))
         stddev = history.aggregate(StdDev('heartrate'))
