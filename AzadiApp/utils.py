@@ -56,10 +56,13 @@ def send_alerts(watch):
     return send_mail(watch) and send_sms(watch)
 
 def get_location_from_coords(lat, long):
-    res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(lat)+'+'+str(long)+'&key='+os.environ['geocage_key'])
-    data = res.json()['results']
-    if 'county' in data[0]['components']:
-        loc = data[0]["components"]["county"]
-    else:
-        loc = data[0]["components"]["city"]
+    try:
+        res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(lat)+'+'+str(long)+'&key='+os.environ['geocage_key'])
+        data = res.json()['results']
+        if 'county' in data[0]['components']:
+            loc = data[0]["components"]["county"]
+        else:
+            loc = data[0]["components"]["city"]
+    except Exception:
+        raise Exception("data:"+str(data))
     return loc, data[0]["formatted"]
