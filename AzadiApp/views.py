@@ -2,15 +2,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.utils.html import escape
 
-from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse, JsonResponse
 from rest_framework import generics, status
 
-from datetime import datetime, timedelta
-import json
+from datetime import timedelta
 import requests
 from . import utils
 
@@ -23,44 +20,6 @@ import random
 def index(request):
     return redirect('login')
 
-def signupUser(request):
-    if request.method == 'POST':
-        username = escape(request.POST.get('username'))
-        email = escape(request.POST.get('email'))
-        phone = escape(request.POST.get('phone'))
-        raw_password = escape(request.POST.get('password1'))
-        raw_password2 = escape(request.POST.get('password2'))
-        try:
-            if raw_password == raw_password2 and len(raw_password) >= 6:
-                user = AppUser.objects.create(username=username, password=raw_password, email=email, phone=phone)
-                user.set_password(raw_password)
-                user.save()
-                login(request, user) # logs User in
-                return redirect('my-watches')
-            elif len(raw_password) >= 6:
-                return render(request, 'Authentication/signup.html', {'error': "Passwords do not match!"})
-            else:
-                return render(request, 'Authentication/signup.html', {'error': "Password must be 6 characters or more"})
-        except Exception as e:
-            return render(request, 'Authentication/signup.html', {'error': str(e)})
-    return render(request, 'Authentication/signup.html', {'error': None})
-
-def loginUser(request):
-    if request.method == 'POST':
-        username = escape(request.POST.get('username'))
-        raw_password = escape(request.POST.get('password'))
-        user = authenticate(username=username, password=raw_password)
-        if user is not None:
-            login(request, user) # logs User in
-            return redirect('my-watches')
-        else:
-            return render(request, 'Authentication/signup.html', {'error': "Unable to Log you in!"})
-    return render(request, 'Authentication/login.html', {'error': None})
-
-def logoutUser(request):
-    logout(request)
-    return redirect('index')
-
 @login_required
 def my_watches(request):
     if request.method == 'POST':
@@ -71,6 +30,7 @@ def my_watches(request):
         success = False
     watches = list(Watch.objects.filter(owner=request.user))
     if request.user.watches.all().exists():
+        # trusted users should also be able to see
         watches.extend(list(request.user.watches.all()))
     return render(request, 'my_watches.html', {'success': success, 'watches': WatchSerializer(watches, many=True).data})
 
@@ -84,9 +44,9 @@ def fullData(request, wid):
 class PostData(generics.GenericAPIView):
     # permission_classes = (AllowAny,)
 
-    def post(self, request, token):
+    def post(self, request, wid):
         try:
-            watch = Watch.objects.get(id=token)
+            watch = Watch.objects.get(id=wid)
         except Watch.DoesNotExist:
             return HttpResponse("Watch not found. Check the token sent.", status=status.HTTP_400_BAD_REQUEST)
 
