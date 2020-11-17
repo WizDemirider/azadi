@@ -107,7 +107,7 @@ class PostData(generics.GenericAPIView):
                     watch.save()
                     new_data.location_requested = True
                 except Exception:
-                    return HttpResponse(str(data[0]))
+                    return HttpResponse(str(data))
 
         if curr_hr:
             new_data.heartrate = int(curr_hr)
