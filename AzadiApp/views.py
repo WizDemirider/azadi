@@ -78,36 +78,36 @@ class PostData(generics.GenericAPIView):
             if History.objects.filter(watch=watch, location_requested=True).exists():
                 last_req = History.objects.filter(watch=watch, location_requested=True).latest('timestamp')
                 if utils.haversine(new_data.get_coordinates(), last_req.get_coordinates())['km'] > 1:
-                    try:
-                        res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
-                        data = res.json()['results']
-                        # loc = [location['formatted'] for location in data]
-                        if 'county' in data[0]['components']:
-                            loc = data[0]["components"]["county"]
-                            watch.last_location = data[0]["components"]["county"]
-                        else:
-                            loc = data[0]["components"]["city"]
-                            watch.last_location = data[0]["components"]["city"]
-                        watch.full_location = data[0]["formatted"]
-                        watch.save()
-                        new_data.location_requested = True
-                    except Exception:
-                        return HttpResponse(str(data))
+                    res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
+                    data = res.json()['results']
+                    # loc = [location['formatted'] for location in data]
+                    if 'county' in data[0]['components']:
+                        loc = data[0]["components"]["county"]
+                        watch.last_location = data[0]["components"]["county"]
+                    else:
+                        loc = data[0]["components"]["city"]
+                        watch.last_location = data[0]["components"]["city"]
+                    watch.full_location = data[0]["formatted"]
+                    watch.save()
+                    new_data.location_requested = True
                 else:
                     loc = watch.last_location
             else:
                 res = requests.get('https://api.opencagedata.com/geocode/v1/json?q='+str(clat)+'+'+str(clong)+'&key=f80b2fa819d443819a1545a667753d9f')
                 data = res.json()['results']
                 # loc = [location['formatted'] for location in data]
-                if 'county' in data[0]['components']:
-                    loc = data[0]["components"]["county"]
-                    watch.last_location = data[0]["components"]["county"]
-                else:
-                    loc = data[0]["components"]["city"]
-                    watch.last_location = data[0]["components"]["city"]
-                watch.full_location = data[0]["formatted"]
-                watch.save()
-                new_data.location_requested = True
+                try:
+                    if 'county' in data[0]['components']:
+                        loc = data[0]["components"]["county"]
+                        watch.last_location = data[0]["components"]["county"]
+                    else:
+                        loc = data[0]["components"]["city"]
+                        watch.last_location = data[0]["components"]["city"]
+                    watch.full_location = data[0]["formatted"]
+                    watch.save()
+                    new_data.location_requested = True
+                except Exception:
+                    return HttpResponse(str(data[0]))
 
         if curr_hr:
             new_data.heartrate = int(curr_hr)
