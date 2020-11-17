@@ -1,3 +1,4 @@
-web: python manage.py runserver; python manage.py process_tasks &
+web: python manage.py runserver
+processtasks: python manage.py process_tasks &
 migrate: python manage.py migrate
 makemigrations: python manage.py makemigrations

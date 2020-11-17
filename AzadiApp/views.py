@@ -50,9 +50,12 @@ class PostData(generics.GenericAPIView):
 
     def analyze_heartrate(self, watch, current_hr):
         history = History.objects.filter(watch=watch)
-        mean = history.aggregate(Avg('heartrate'))
-        stddev = history.aggregate(StdDev('heartrate'))
-        if stddev < abs(current_hr - mean):
+        if history.count() < 100:
+            return
+        mean = history.aggregate(Avg('heartrate'))['heartrate__avg']
+        stddev = history.aggregate(StdDev('heartrate'))['heartrate__stddev']
+        print(mean, stddev)
+        if round(stddev) < abs(current_hr - round(mean)):
             watch.type_of_attack = 'h'
             watch.save()
             utils.send_alerts(watch.id)
