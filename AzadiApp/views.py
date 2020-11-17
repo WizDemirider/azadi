@@ -1,3 +1,4 @@
+from AzadiApp.utils import writelog
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.utils.html import escape
@@ -13,12 +14,14 @@ from . import utils
 import os
 from .models import *
 from .serializers import *
-import random
 #from . import nlp
 
 
 def index(request):
-    return redirect('login')
+    if request.user.is_authenticated:
+        return redirect('my-watches')
+    else:
+        return redirect('login')
 
 @login_required
 def my_watches(request):
@@ -59,7 +62,7 @@ class PostData(generics.GenericAPIView):
         except Exception:
             return HttpResponse("Data format is wrong, expected lat, long, hr, button_pressed and fall_detected.", status=status.HTTP_400_BAD_REQUEST)
         if os.environ['DEBUG']:
-            print("data", recv_data)
+            writelog("data", recv_data)
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
@@ -88,6 +91,8 @@ class PostData(generics.GenericAPIView):
 
         if curr_hr:
             new_data.heartrate = int(curr_hr)
+            # analyse heartrate
+            utils.send_alerts(watch.id)
         else:
             new_data.heartrate = None
         new_data.save()
@@ -95,8 +100,9 @@ class PostData(generics.GenericAPIView):
         if fall == 1.0:
             watch.type_of_attack = 'f'
             watch.save()
+            utils.send_alerts(watch.id)
 
-        if b_pressed == 0.0:
+        if b_pressed == 1.0:
             watch.type_of_attack = None
             watch.save()
 
@@ -105,7 +111,7 @@ class PostData(generics.GenericAPIView):
         else:
             atk = '0'
 
-        # print(nlp.detect_problem())
+        # writelog(nlp.detect_problem())
         timestamp = new_data.timestamp+timedelta(hours=5, minutes=30)
 
         return HttpResponse(atk+timestamp.strftime('%d/%m/%y')+timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc+recv_data)
@@ -117,7 +123,8 @@ class AttackPressed(generics.GenericAPIView):
         if watch.type_of_attack == None:
             watch.type_of_attack = 'p'
             watch.save()
-            utils.send_alerts(watch)
+            utils.send_alerts(watch.id)
+            writelog("Physical Attack")
         else:
             watch.type_of_attack = None
             watch.save()
@@ -143,7 +150,7 @@ class TrackLocationToggle(generics.GenericAPIView):
 #         if fall:
 #             watch.type_of_attack = 'f'
 #             watch.save()
-#             print("Fall Detected")
-#             utils.send_alerts(watch)
+#             writelog("Fall Detected")
+#             utils.send_alerts(watch.id)
 
 #         return HttpResponse(str(fall))

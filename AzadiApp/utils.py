@@ -5,6 +5,7 @@ from twilio.rest import Client
 import Azadi.settings as settings
 import os, requests
 from background_task import background
+from .models import Watch
 
 def haversine(pos1, pos2):
     lat1 = float(pos1[0])
@@ -29,7 +30,7 @@ def send_mail(watch):
         mail = EmailMessage('Emergency Alert: '+watch.get_type_of_attack_display(), watch.owner.username+' may need your help! Please contact them immediately! Current Location: '+watch.full_location, 'ankanarn@gmail.com', [u.email for u in watch.trusted_users.all()])
         mail.send()
     except Exception as e:
-        print(str(e))
+        writelog(str(e))
         return False
     return True
 
@@ -38,17 +39,22 @@ def send_sms(watch):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         message = client.messages.create(to=[u.phone for u in watch.trusted_users.all()], from_=os.environ['ANPHONE'], body='Emergency Alert: '+watch.get_type_of_attack_display()+'. '+watch.owner.username+' may need your help!')
         for attr in dir(message):
-            print("message.%s = %r" % (attr, getattr(message, attr)))
+            writelog("message.%s = %r" % (attr, getattr(message, attr)))
     except BadHeaderError:
         return False
     except Exception as e:
-        print(str(e))
+        writelog(str(e))
         return False
     return True
 
-@background(schedule=30)
-def send_alerts(watch):
-    return send_mail(watch) and send_sms(watch)
+@background(schedule=10)
+def send_alerts(watch_id):
+    watch = Watch.objects.get(id=watch_id)
+    if watch.type_of_attack != None:
+        writelog("Sending alerts about:"+watch.get_type_of_attack_display())
+        return send_mail(watch) and send_sms(watch)
+    else:
+        return False
 
 def get_location_from_coords(lat, long):
     try:
@@ -62,3 +68,7 @@ def get_location_from_coords(lat, long):
     except Exception:
         raise Exception("data:"+str(res.json()))
     return loc, data[0]["formatted"]
+
+def writelog(text, fname="debug"):
+    with open(os.path.join(settings.BASE_DIR, fname+'.log'), 'a') as logfile:
+        logfile.write(text+"\n")

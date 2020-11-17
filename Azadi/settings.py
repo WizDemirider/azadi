@@ -97,7 +97,6 @@ DJANGO_TWILIO_BLACKLIST_CHECK = True
 
 WSGI_APPLICATION = 'Azadi.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
