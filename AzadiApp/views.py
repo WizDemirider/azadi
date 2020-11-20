@@ -54,7 +54,6 @@ class PostData(generics.GenericAPIView):
             return
         mean = history.aggregate(Avg('heartrate'))['heartrate__avg']
         stddev = history.aggregate(StdDev('heartrate'))['heartrate__stddev']
-        print(mean, stddev)
         if round(stddev) < abs(current_hr - round(mean)):
             watch.type_of_attack = 'h'
             watch.save()
@@ -71,7 +70,7 @@ class PostData(generics.GenericAPIView):
 
         recv_data = request.body.decode()
         try:
-            clat, clong, curr_hr, b_pressed, fall = [float(val) for val in recv_data.split('&')]
+            clat, clong, curr_hr, fall, b_pressed = [float(val) for val in recv_data.split('&')]
         except Exception:
             return HttpResponse("Data format is wrong, expected lat, long, hr, button_pressed and fall_detected.", status=status.HTTP_400_BAD_REQUEST)
         if os.environ['DEBUG']:
@@ -105,7 +104,7 @@ class PostData(generics.GenericAPIView):
         if curr_hr:
             new_data.heartrate = int(curr_hr)
             # analyse heartrate
-            self.analyze_heartrate(watch, int(curr_hr))
+            # self.analyze_heartrate(watch, int(curr_hr))
         else:
             new_data.heartrate = None
         new_data.save()
