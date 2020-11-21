@@ -73,8 +73,6 @@ class PostData(generics.GenericAPIView):
             clat, clong, curr_hr, fall, b_pressed = [float(val) for val in recv_data.split('&')]
         except Exception:
             return HttpResponse("Data format is wrong, expected lat, long, hr, button_pressed and fall_detected.", status=status.HTTP_400_BAD_REQUEST)
-        if os.environ['DEBUG']:
-            writelog("data", recv_data)
 
         if clat and clong:
             new_data.set_coordinates(clat, clong)
@@ -123,10 +121,12 @@ class PostData(generics.GenericAPIView):
         else:
             atk = '0'
 
-        # writelog(nlp.detect_problem())
         timestamp = new_data.timestamp+timedelta(hours=5, minutes=30)
+        data_resp = str(atk+timestamp.strftime('%d/%m/%y')+timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc+recv_data)
+        if os.environ['DEBUG']:
+            writelog(data_resp, "Datalog")
 
-        return HttpResponse(atk+timestamp.strftime('%d/%m/%y')+timestamp.strftime('%I:%M %p')+str(new_data.heartrate)+loc+recv_data)
+        return HttpResponse(data_resp)
 
 class AttackPressed(generics.GenericAPIView):
 

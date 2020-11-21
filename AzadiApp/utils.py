@@ -1,9 +1,10 @@
+from datetime import date
 from math import pi,sqrt,sin,cos,atan2
 
 from django.core.mail import BadHeaderError, send_mail,EmailMessage
 from twilio.rest import Client
 import Azadi.settings as settings
-import os, requests
+import os, requests, datetime
 from background_task import background
 from .models import Watch
 
@@ -69,6 +70,8 @@ def get_location_from_coords(lat, long):
         raise Exception("data:"+str(res.json()))
     return loc, data[0]["formatted"]
 
-def writelog(text, fname="debug"):
+def writelog(text, fname="debug", timestamp=True):
     with open(os.path.join(settings.BASE_DIR, fname+'.log'), 'a') as logfile:
+        if timestamp:
+            logfile.write(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")+": ")
         logfile.write(text+"\n")
