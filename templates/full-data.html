@@ -17,7 +17,7 @@
             <span>Owner: {{watch_json.owner}}</span>
             <span>Location: {{watch.full_location}}</span>
             <span>Home: {{watch.get_home_coordinates.0}}, {{watch.get_home_coordinates.1}}</span><br>
-            <span>Trusted Contacts: </span>
+            {% if watch.trusted_users.all.exists %}<span>Trusted Contacts: </span>{% endif %}
             <ul>
                 {% for contact in watch.trusted_users.all %}
                 <li>{{contact.username}}</li>

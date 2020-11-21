@@ -19,11 +19,11 @@
 {% block content %}
 <div class="container">
         <h3 style="border-bottom:1.5px solid #f44336;font-weight:400;">Your Watches</h3>
+        {% if success %}
+            <div class="alert alert-success">Watch added!</div>
+        {% endif %}
     <div class="row">
         <div class="col-xs-12 col-md-8 col-lg-6 card" style="height:230px;">
-            {% if success %}
-                <div class="alert alert-success">Watch added!</div>
-            {% endif %}
             <h3 style="border-bottom:1.5px solid #f44336;font-weight:400;margin-bottom:10px;">Enter watch ID to add</h3>
             <form method="POST">
                 {% csrf_token %}
