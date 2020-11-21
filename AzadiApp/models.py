@@ -25,6 +25,7 @@ class Watch(models.Model):
     home_latitude = models.BigIntegerField(null=True)
     home_longitude = models.BigIntegerField(null=True)
     track_location = models.BooleanField(default=False)
+    excercise_mode = models.BooleanField(default=False)
 
     def get_home_coordinates(self):
         if self.home_latitude and self.home_longitude:

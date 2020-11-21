@@ -44,7 +44,7 @@
                 <div class="card-body" style="padding: 0 0 0 0;">
 
                     {% if watch.coordinates %}
-                    <div style="width: 424.5px; height: 250px" class="card-img-top" id="map{{watch.id}}">
+                    <div style="width:540px; height:250px" class="card-img-top" id="map{{watch.id}}">
                     {% else %}
                     <div class="card-body pt-1 pl-2" style="width: 540px; height: 250px">No Location Available</div>
                     {% endif %}
@@ -65,6 +65,10 @@
                             </div> -->
                     </div></a>
                     <div class="card-text pl-2 pb-1 text-center">
+                            <div>
+                                <input type="checkbox" id="excerciseMode" {% if watch.excercise_mode %}checked{% endif %} onclick="toggleexcercisemode({{watch.id}})">
+                                <label for="excerciseMode">Excercise Mode</label>
+                            </div>
                         <button type="button" class="btn btn-danger" onclick="attack_pressed({{watch.id}})">{% if watch.type_of_attack %}Cancel{% else %}Simulate Attack{% endif %}</button>
                     </div>
                 </div>
@@ -84,6 +88,12 @@
   <script type="text/javascript" charset="utf-8">
     attack_pressed = function(wid) {
         fetch(window.location.href.split('/').slice(0,3).join('/')+'/api/attack-pressed/'+wid.toString()).then(
+            setTimeout(function(){ window.location.reload() }, 500)
+        );
+    }
+
+    toggleexcercisemode = function(wid) {
+        fetch(window.location.href.split('/').slice(0,3).join('/')+'/api/excercise-mode-toggle/'+wid.toString()).then(
             setTimeout(function(){ window.location.reload() }, 500)
         );
     }

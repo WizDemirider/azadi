@@ -103,8 +103,8 @@ class PostData(generics.GenericAPIView):
 
         if curr_hr:
             new_data.heartrate = int(curr_hr)
-            # analyse heartrate
-            # self.analyze_heartrate(watch, int(curr_hr))
+            if not watch.excercise_mode:
+                self.analyze_heartrate(watch, int(curr_hr))
         else:
             new_data.heartrate = None
         new_data.save()
@@ -140,6 +140,14 @@ class AttackPressed(generics.GenericAPIView):
         else:
             watch.type_of_attack = None
             watch.save()
+        return JsonResponse({})
+
+class ExcerciseModeToggle(generics.GenericAPIView):
+
+    def get(self, request, wid):
+        watch = Watch.objects.get(id=wid)
+        watch.excercise_mode = not watch.excercise_mode
+        watch.save()
         return JsonResponse({})
 
 class TrackLocationToggle(generics.GenericAPIView):
